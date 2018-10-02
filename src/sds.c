@@ -92,7 +92,7 @@ sds sdsnewlenA(const void *init, size_t initlen, alloc a) {
 
     sh = a->alloc(hdrlen+initlen+1);
     if (!init)
-        memset(sh, 0, hdrlen+initlen+1);
+        a->memset(sh, 0, hdrlen+initlen+1);
     if (sh == NULL) return NULL;
     s = (char*)sh+hdrlen;
     fp = ((unsigned char*)s)-1;
@@ -131,7 +131,7 @@ sds sdsnewlenA(const void *init, size_t initlen, alloc a) {
         }
     }
     if (initlen && init)
-        memcpy(s, init, initlen);
+        a->memcpy(s, init, initlen);
     s[initlen] = '\0';
     return s;
 }
@@ -228,7 +228,7 @@ sds sdsMakeRoomForA(sds s, size_t addlen, alloc a) {
          * and can't use realloc */
         newsh = a->alloc(hdrlen+newlen+1);
         if (newsh == NULL) return NULL;
-        memcpy((char*)newsh+hdrlen, s, len+1);
+        a->memcpy((char*)newsh+hdrlen, s, len+1);
         a->free(sh);
         s = (char*)newsh+hdrlen;
         s[-1] = type;
@@ -267,7 +267,7 @@ sds sdsRemoveFreeSpaceA(sds s, alloc a) {
     } else {
         newsh = a->alloc(hdrlen+len+1);
         if (newsh == NULL) return NULL;
-        memcpy((char*)newsh+hdrlen, s, len+1);
+        a->memcpy((char*)newsh+hdrlen, s, len+1);
         a->free(sh);
         s = (char*)newsh+hdrlen;
         s[-1] = type;
@@ -372,7 +372,7 @@ sds sdsgrowzeroA(sds s, size_t len, alloc a) {
     if (s == NULL) return NULL;
 
     /* Make sure added region doesn't contain garbage */
-    memset(s+curlen,0,(len-curlen+1)); /* also set trailing \0 byte */
+    a->memset(s+curlen,0,(len-curlen+1)); /* also set trailing \0 byte */
     sdssetlen(s, len);
     return s;
 }
@@ -387,7 +387,7 @@ sds sdscatlenA(sds s, const void *t, size_t len, alloc a) {
 
     s = sdsMakeRoomForA(s,len,a);
     if (s == NULL) return NULL;
-    memcpy(s+curlen, t, len);
+    a->memcpy(s+curlen, t, len);
     sdssetlen(s, curlen+len);
     s[curlen+len] = '\0';
     return s;

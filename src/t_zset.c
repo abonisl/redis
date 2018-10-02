@@ -1919,7 +1919,7 @@ int zuiNext(zsetopsrc *op, zsetopval *val, alloc a) {
     if (val->flags & OPVAL_DIRTY_SDS)
         sdsfreeA(val->ele, a);
 
-    memset(val,0,sizeof(zsetopval));
+    a->memset(val,0,sizeof(zsetopval));
 
     if (op->type == OBJ_SET) {
         iterset *it = &op->iter.set;
